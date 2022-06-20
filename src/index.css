@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#root{
+    max-height: 100vh;
+    display:grid;
+    grid-template-columns: 3rem 1fr 360px;
+
+}
+
+* {
+    box-sizing:border-box;
+
+}
+
+#root > * {
+    position:sticky;
+}
+
+

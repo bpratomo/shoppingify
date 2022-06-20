@@ -1,0 +1,46 @@
+.base{
+    background-color: #fafafe ;
+    padding:1rem;
+    min-height:100%
+}
+.header{
+    display:flex;
+    justify-content:space-between;
+
+}
+
+.searchbar{
+    border: 1px transparent;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:1rem;
+    background:white;
+    box-shadow: 5px 5px rgba(0,0,0,0.04);
+    align-self:flex-start;
+    
+
+
+}
+
+
+.searchbar__text{
+    border:none
+}
+
+.colored{
+    color:#F9A109 
+}
+
+.header__text{
+    align-self:flex-end;
+    padding:1rem
+}
+
+.category__items{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem
+}

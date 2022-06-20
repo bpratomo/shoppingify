@@ -1,0 +1,13 @@
+.base{
+    display:flex;
+    justify-content:space-between;
+    padding:0.5rem 1rem;
+    background:white;
+    border-radius:0.3rem;
+    box-shadow: 5px 5px rgba(0,0,0,0.04);
+    gap: 0.5rem;
+    font-size: 0.75rem
+
+}
+
+
