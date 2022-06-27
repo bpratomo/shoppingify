@@ -1,0 +1,107 @@
+//IMPORTS
+//
+//
+//
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState, AppThunk } from "../../app/store";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { db } from "../firebase/firebaseConfig";
+
+////////////////////////////////////////////////////////////////////////////
+//MODELING PART
+/////////////////////////////////////////////////////////////////////////////
+
+export interface ItemType {
+  id?: String;
+  category: String;
+  name: String;
+  note: String;
+  imageUrl: String;
+}
+
+export interface ItemListState {
+  items: ItemType[];
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//REDUX PART
+/////////////////////////////////////////////////////////////////////////////
+const initialState: ItemListState = {
+  items: [],
+};
+
+export const itemSlice = createSlice({
+  name: "item",
+  initialState,
+  reducers: {
+    addItem: (state, action: PayloadAction<ItemType>) => {
+      state.items.push(action.payload);
+    },
+
+    removeItem: (state, action: PayloadAction<ItemType>) => {
+      state.items.filter((i) => i != action.payload);
+    },
+  },
+});
+
+export const { addItem, removeItem } = itemSlice.actions;
+
+export const getItems = (state: RootState) => state.item.items;
+
+export default itemSlice.reducer;
+
+//////////////////////////////////////////////////////////////////////////////
+//FIRESTORE PART
+/////////////////////////////////////////////////////////////////////////////
+
+export async function createNewItem(item: ItemType) {
+  try {
+    await addDoc(collection(db, "items"), {
+      name: item.name,
+      category: item.category,
+      note: item.note,
+      imageUrl: item.imageUrl,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export function useItems(deps: any) {
+  console.log("triggered");
+  const dispatch = useAppDispatch();
+  const relevantItemsQuery = query(collection(db, "items"));
+
+  const testItem: ItemType = {
+    name: "Avocado",
+    category: "Fruits and Vegetables",
+    note: "Tasty!",
+    imageUrl:
+      "https://media.istockphoto.com/photos/half-of-fresh-ripe-avocado-isolated-on-white-background-picture-id1278032327?k=20&m=1278032327&s=612x612&w=0&h=y8W1WkUJ_EKrJnx6wRSEiY8ruegFxsSOaliKU0ju6z0=",
+  };
+
+  // createNewItem(testItem);
+
+  onSnapshot(relevantItemsQuery, function (snapshot) {
+    console.log("snapshot created");
+    console.log(snapshot);
+    snapshot.docChanges().forEach(function (change) {
+      let item = <ItemType>change.doc.data();
+      console.log(item);
+      console.log(change.doc.data());
+      if (change.type === "removed") {
+        dispatch(removeItem(item));
+      } else if (change.type === "added") {
+        dispatch(addItem(item));
+      }
+    });
+  });
+}

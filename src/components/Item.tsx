@@ -1,11 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { ItemType } from "../features/item/itemSlice";
 import styles from "./Item.module.css";
-
-export interface ItemType {
-  category: String;
-  name: String;
-}
 
 interface ItemProps {
   item: ItemType;

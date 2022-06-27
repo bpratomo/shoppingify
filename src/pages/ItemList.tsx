@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./ItemList.module.css";
 import Item from "../components/Item";
-import { ItemType } from "../components/Item";
+import { ItemType, getItems, useItems } from "../features/item/itemSlice";
+import { useAppSelector } from "../app/hooks";
 let sampleItemList = [
   {
     category: "Fruit and Vegetables",
@@ -47,7 +48,12 @@ interface CategoryContainerProps {
 function CategoryContainer(props: CategoryContainerProps) {
   const [relevantItems, setRelevantItems] = useState<ItemType[]>(props.items);
   const [counter, setCounter] = useState(0);
+  if (counter === 0) {
+    useItems();
+    setCounter(1);
+  }
   useEffect(() => {
+    useItems();
     let filtered = props.items.filter((i) => i.category === props.category);
     setRelevantItems(filtered);
     let oldCounter = counter;
@@ -68,6 +74,7 @@ function CategoryContainer(props: CategoryContainerProps) {
 }
 
 function ItemList({}) {
+  const items = useAppSelector(getItems);
   return (
     <div className={styles.base}>
       <section className={styles.header}>
@@ -84,10 +91,7 @@ function ItemList({}) {
           />
         </div>
       </section>
-      <CategoryContainer
-        category="Fruit and Vegetables"
-        items={sampleItemList}
-      />
+      <CategoryContainer category="Fruit and Vegetables" items={items} />
     </div>
   );
 }
