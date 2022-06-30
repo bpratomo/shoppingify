@@ -1,15 +1,25 @@
+/////////////////////////////////////////////////////////////////////////////
 //IMPORTS
-//
-//
-//
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../../app/store";
+/////////////////////////////////////////////////////////////////////////////
 import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  ThunkDispatch,
+} from "@reduxjs/toolkit";
+import { RootState, AppThunk, store } from "../../app/store";
+import {
+  documentId,
+  where,
+  doc,
   addDoc,
+  getDoc,
+  deleteDoc,
   collection,
   onSnapshot,
   orderBy,
   query,
+  DocumentData,
 } from "firebase/firestore";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -20,11 +30,11 @@ import { db } from "../firebase/firebaseConfig";
 /////////////////////////////////////////////////////////////////////////////
 
 export interface ItemType {
-  id?: String;
-  category: String;
-  name: String;
-  note: String;
-  imageUrl: String;
+  id?: string;
+  category: string;
+  name: string;
+  note: string;
+  imageUrl: string;
 }
 
 export interface ItemListState {
@@ -47,7 +57,7 @@ export const itemSlice = createSlice({
     },
 
     removeItem: (state, action: PayloadAction<ItemType>) => {
-      state.items.filter((i) => i != action.payload);
+      state.items.filter((i) => i.id != action.payload.id);
     },
   },
 });
@@ -58,6 +68,9 @@ export const getItems = (state: RootState) => state.item.items;
 
 export default itemSlice.reducer;
 
+//////////////////////////////////////////////////////////////////////////////
+//Interop
+/////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //FIRESTORE PART
 /////////////////////////////////////////////////////////////////////////////
@@ -75,9 +88,17 @@ export async function createNewItem(item: ItemType) {
   }
 }
 
-export function useItems(deps: any) {
-  console.log("triggered");
-  const dispatch = useAppDispatch();
+export async function deleteItem(docId: string) {
+  try {
+    const docRef = doc(db, "items", docId);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export function initializeItems(dispatch: any) {
+  console.log("triggered init");
   const relevantItemsQuery = query(collection(db, "items"));
 
   const testItem: ItemType = {
@@ -91,12 +112,11 @@ export function useItems(deps: any) {
   // createNewItem(testItem);
 
   onSnapshot(relevantItemsQuery, function (snapshot) {
-    console.log("snapshot created");
-    console.log(snapshot);
     snapshot.docChanges().forEach(function (change) {
       let item = <ItemType>change.doc.data();
-      console.log(item);
       console.log(change.doc.data());
+      item.id = change.doc.id;
+      console.log(item);
       if (change.type === "removed") {
         dispatch(removeItem(item));
       } else if (change.type === "added") {

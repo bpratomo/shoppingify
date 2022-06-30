@@ -2,72 +2,27 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./ItemList.module.css";
 import Item from "../components/Item";
-import { ItemType, getItems, useItems } from "../features/item/itemSlice";
-import { useAppSelector } from "../app/hooks";
-let sampleItemList = [
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-  {
-    category: "Fruit and Vegetables",
-    name: "Avocado",
-  },
-
-  {
-    category: "Fish",
-    name: "Salmon",
-  },
-];
-
+import {
+  ItemType,
+  getItems,
+  initializeItems,
+} from "../features/item/itemSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 interface CategoryContainerProps {
   category: String;
   items: ItemType[];
 }
 
 function CategoryContainer(props: CategoryContainerProps) {
-  const [relevantItems, setRelevantItems] = useState<ItemType[]>(props.items);
-  const [counter, setCounter] = useState(0);
-  if (counter === 0) {
-    useItems();
-    setCounter(1);
-  }
-  useEffect(() => {
-    useItems();
-    let filtered = props.items.filter((i) => i.category === props.category);
-    setRelevantItems(filtered);
-    let oldCounter = counter;
-    setCounter(oldCounter + 1);
-    console.log(props.category);
-  }, []);
-
   return (
     <section className={styles.category__container}>
       <h3 className={styles.category__header}>{props.category}</h3>
       <div className={styles.category__items}>
-        {relevantItems.map((i) => (
-          <Item item={i} />
-        ))}
+        {props.items
+          .filter((i) => i.category === props.category)
+          .map((i) => (
+            <Item item={i} key={i.id} />
+          ))}
       </div>
     </section>
   );
@@ -75,6 +30,17 @@ function CategoryContainer(props: CategoryContainerProps) {
 
 function ItemList({}) {
   const items = useAppSelector(getItems);
+  const [counter, setCounter] = useState(0);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (counter === 0) {
+      initializeItems(dispatch);
+      // setCounter(1);
+      console.log("triggered");
+    }
+  }, []);
   return (
     <div className={styles.base}>
       <section className={styles.header}>
@@ -91,7 +57,7 @@ function ItemList({}) {
           />
         </div>
       </section>
-      <CategoryContainer category="Fruit and Vegetables" items={items} />
+      <CategoryContainer category="Fruits and Vegetables" items={items} />
     </div>
   );
 }
