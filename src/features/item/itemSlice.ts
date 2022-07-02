@@ -100,14 +100,13 @@ export async function deleteItem(docId: string) {
 export function initializeItems(dispatch: any) {
   console.log("triggered init");
   const relevantItemsQuery = query(collection(db, "items"));
-
-  const testItem: ItemType = {
-    name: "Avocado",
-    category: "Fruits and Vegetables",
-    note: "Tasty!",
-    imageUrl:
-      "https://media.istockphoto.com/photos/half-of-fresh-ripe-avocado-isolated-on-white-background-picture-id1278032327?k=20&m=1278032327&s=612x612&w=0&h=y8W1WkUJ_EKrJnx6wRSEiY8ruegFxsSOaliKU0ju6z0=",
-  };
+  //
+  //     name: "Avocado",
+  //     category: "Fruits and Vegetables",
+  //     note: "Tasty!",
+  //     imageUrl:
+  //       "https://media.istockphoto.com/photos/half-of-fresh-ripe-avocado-isolated-on-white-background-picture-id1278032327?k=20&m=1278032327&s=612x612&w=0&h=y8W1WkUJ_EKrJnx6wRSEiY8ruegFxsSOaliKU0ju6z0=",
+  //   };
 
   // createNewItem(testItem);
 

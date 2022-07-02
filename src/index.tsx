@@ -1,23 +1,16 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 import App from "./App";
-import ShoppingList from "./pages/ShoppingList";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import ItemList from "./pages/ItemList";
-import { Sidebar } from "./components/Sidebar";
-
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <Sidebar />
-    <ItemList />
-    <ShoppingList />
+    <App />
   </Provider>
   // </React.StrictMode>
 );
