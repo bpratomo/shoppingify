@@ -59,10 +59,18 @@ export const itemSlice = createSlice({
     removeItem: (state, action: PayloadAction<ItemType>) => {
       state.items.filter((i) => i.id != action.payload.id);
     },
+    updateItem: (state, action: PayloadAction<ItemType>) => {
+      return {
+        ...state,
+        items: state.items.map((i) =>
+          i.id === action.payload.id ? action.payload : i
+        ),
+      };
+    },
   },
 });
 
-export const { addItem, removeItem } = itemSlice.actions;
+export const { addItem, removeItem, updateItem } = itemSlice.actions;
 
 export const getItems = (state: RootState) => state.item.items;
 
@@ -118,8 +126,12 @@ export function initializeItems(dispatch: any) {
       console.log(item);
       if (change.type === "removed") {
         dispatch(removeItem(item));
-      } else if (change.type === "added") {
+      }
+      if (change.type === "added") {
         dispatch(addItem(item));
+      }
+      if (change.type === "modified") {
+        dispatch(updateItem(item));
       }
     });
   });

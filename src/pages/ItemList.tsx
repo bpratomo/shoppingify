@@ -8,6 +8,11 @@ function ItemList({}) {
   const items = useAppSelector(getItems);
   const [counter, setCounter] = useState(0);
   const [searchText, setSearchText] = useState("");
+  let allCategories = items.map((i) => i.category).filter((i) => i);
+  let categories = [...new Set(allCategories)];
+  console.log(`allcategories:${allCategories}`);
+  console.log(`categories: ${categories} ${categories.length}`);
+  console.log(`items: ${items}`);
 
   return (
     <div className={styles.base}>
@@ -27,11 +32,15 @@ function ItemList({}) {
           />
         </div>
       </section>
-      <CategoryContainer
-        category="Fruits and Vegetables"
-        items={items}
-        searchString={searchText}
-      />
+
+      {categories.map((c) => (
+        <CategoryContainer
+          category={c}
+          items={items}
+          searchString={searchText}
+          key={c}
+        />
+      ))}
     </div>
   );
 }
