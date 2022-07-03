@@ -4,7 +4,6 @@ import Item from "../Item";
 interface CategoryContainerProps {
   category: string;
   items: ItemType[];
-  searchString: string;
 }
 export default function CategoryContainer(props: CategoryContainerProps) {
   return (
@@ -13,7 +12,6 @@ export default function CategoryContainer(props: CategoryContainerProps) {
       <div className={styles.category__items}>
         {props.items
           .filter((i) => i.category === props.category)
-          .filter((i) => i.name.includes(props.searchString))
           .map((i) => (
             <Item item={i} key={i.id} />
           ))}

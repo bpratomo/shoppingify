@@ -5,10 +5,18 @@ import { getItems } from "../features/item/itemSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 function ItemList({}) {
-  const items = useAppSelector(getItems);
-  const [counter, setCounter] = useState(0);
   const [searchText, setSearchText] = useState("");
-  let allCategories = items.map((i) => i.category).filter((i) => i);
+  const items = useAppSelector(getItems);
+  const relevantItems =
+    items.length > 0
+      ? items.filter((i) =>
+          i.name
+            ? i.name.toLowerCase().includes(searchText.toLowerCase())
+            : undefined
+        )
+      : [];
+
+  let allCategories = relevantItems.map((i) => i.category).filter((i) => i);
   let categories = [...new Set(allCategories)];
   console.log(`allcategories:${allCategories}`);
   console.log(`categories: ${categories} ${categories.length}`);
@@ -34,12 +42,7 @@ function ItemList({}) {
       </section>
 
       {categories.map((c) => (
-        <CategoryContainer
-          category={c}
-          items={items}
-          searchString={searchText}
-          key={c}
-        />
+        <CategoryContainer category={c} items={items} key={c} />
       ))}
     </div>
   );
