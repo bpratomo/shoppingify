@@ -1,61 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-//REDUX PART
+//MODELING
 /////////////////////////////////////////////////////////////////////////////
 import { ItemType } from "../item/itemSlice";
-
-enum Status {
-  Open,
-  Completed,
-  Cancelled,
-}
-export interface ShoppingListType {
-  id?: String;
-  name: String;
-  status: Status;
-  items: ItemToBuy[];
-}
-
-export interface ItemToBuy {
-  item: ItemType;
-  quantity: Number;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//REDUX PART
-/////////////////////////////////////////////////////////////////////////////
-
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../../app/store";
-
-export interface ShoppingListState {
-  ShoppingLists: ShoppingListType[];
-}
-
-const initialState: ShoppingListState = {
-  ShoppingLists: [],
-};
-
-export const ShoppingListSlice = createSlice({
-  name: "ShoppingList",
-  initialState,
-  reducers: {
-    addShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
-      state.ShoppingLists.push(action.payload);
-    },
-
-    removeShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
-      state.ShoppingLists.filter((i) => i != action.payload);
-    },
-  },
-});
-
-export const { addShoppingList, removeShoppingList } =
-  ShoppingListSlice.actions;
-const dispatch = useAppDispatch();
-
-/////////////////////////////////////////////////////////////////////////////
-//FIRESTORE PART
-/////////////////////////////////////////////////////////////////////////////
 
 import {
   addDoc,
@@ -66,8 +12,69 @@ import {
   query,
 } from "firebase/firestore";
 
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState, AppThunk } from "../../app/store";
 
+export enum Status {
+  Open = "OPEN",
+  Completed = "COMPLETED",
+  Cancelled = "CANCELLED",
+}
+export interface ShoppingListType {
+  id?: string;
+  name: string;
+  status: Status;
+  items: ItemToBuy[];
+}
+
+export interface ItemToBuy {
+  id?: string;
+  item: ItemType;
+  quantity: Number;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//REDUX PART
+/////////////////////////////////////////////////////////////////////////////
+export interface ShoppingListState {
+  ShoppingLists: ShoppingListType[];
+  activeListId: string;
+}
+
+const initialState: ShoppingListState = {
+  ShoppingLists: [],
+  activeListId: "",
+};
+
+export const shoppingListSlice = createSlice({
+  name: "shoppingList",
+  initialState,
+  reducers: {
+    addShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
+      state.ShoppingLists.push(action.payload);
+    },
+
+    removeShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
+      state.ShoppingLists.filter((i) => i != action.payload);
+    },
+
+    setActiveList: (state, action: PayloadAction<string>) => {
+      state.activeListId = action.payload;
+    },
+  },
+});
+
+export const { addShoppingList, removeShoppingList, setActiveList } =
+  shoppingListSlice.actions;
+
+export const getActiveListId = (state: RootState) =>
+  state.shoppingList.activeListId;
+
+export default shoppingListSlice.reducer;
+
+/////////////////////////////////////////////////////////////////////////////
+//FIRESTORE PART
+/////////////////////////////////////////////////////////////////////////////
 export async function createNewShoppingList(shoppingList: ShoppingListType) {
   try {
     await addDoc(collection(getFirestore(), "ShoppingLists"), {
@@ -80,22 +87,50 @@ export async function createNewShoppingList(shoppingList: ShoppingListType) {
   }
 }
 
-function loadShoppingLists() {
+export async function addNewItemInShoppingList(
+  shoppingListId: string,
+  itemToAdd: ItemToBuy
+) {
+  try {
+    const collectionRef = collection(
+      getFirestore(),
+      "ShoppingLists",
+      shoppingListId,
+      "items"
+    );
+    await addDoc(collectionRef, itemToAdd);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export function initializeShoppingLists(dispatch: any) {
   const relevantShoppingListsQuery = query(
     collection(getFirestore(), "ShoppingLists"),
     orderBy("timestamp", "desc")
   );
 
-  onSnapshot(relevantShoppingListsQuery, function (snapshot) {
-    snapshot.docChanges().forEach(function (change) {
-      let shoppingList = <ShoppingListType>change.doc.data();
-      if (change.type === "removed") {
-        dispatch(removeShoppingList(shoppingList));
-      } else if (change.type === "added") {
-        dispatch(addShoppingList(shoppingList));
-      }
-    });
-  });
-}
+  const sampleShoppingList: ShoppingListType = {
+    name: "Test Shopping list",
+    items: [],
+    status: Status.Open,
+  };
 
-loadShoppingLists();
+  // createNewShoppingList(sampleShoppingList);
+  console.log("Shopping List created!");
+
+  const unsubscribe = onSnapshot(
+    relevantShoppingListsQuery,
+    function (snapshot) {
+      snapshot.docChanges().forEach(function (change) {
+        let shoppingList = <ShoppingListType>change.doc.data();
+        if (change.type === "removed") {
+          dispatch(removeShoppingList(shoppingList));
+        } else if (change.type === "added") {
+          dispatch(addShoppingList(shoppingList));
+        }
+      });
+    }
+  );
+  return unsubscribe;
+}

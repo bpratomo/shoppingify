@@ -1,9 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import icon from "../assets/source.svg";
 import styles from "./ShoppingList.module.css";
+import {
+  getActiveListId,
+  initializeShoppingLists,
+  setActiveList,
+} from "../features/shoppingList/shoppingListSlice";
+
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { initializeActiveList } from "../features/activeList/activeListSlice";
 
 function ShoppingItem() {
+  const activeListId = useAppSelector(getActiveListId);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (!activeListId) {
+      initializeShoppingLists(dispatch);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeListId) {
+      dispatch(setActiveList(activeListId));
+      initializeActiveList(dispatch, activeListId);
+    }
+  }, [activeListId]);
+
   return (
     <div className={styles.item}>
       <div className={styles.item_text}>Pre-cooked corn</div>
