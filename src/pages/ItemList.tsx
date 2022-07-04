@@ -18,9 +18,9 @@ function ItemList({}) {
 
   let allCategories = relevantItems.map((i) => i.category).filter((i) => i);
   let categories = [...new Set(allCategories)];
-  console.log(`allcategories:${allCategories}`);
-  console.log(`categories: ${categories} ${categories.length}`);
-  console.log(`items: ${items}`);
+  // console.log(`allcategories:${allCategories}`);
+  // console.log(`categories: ${categories} ${categories.length}`);
+  // console.log(`items: ${items}`);
 
   return (
     <div className={styles.base}>

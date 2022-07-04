@@ -130,7 +130,7 @@ export async function fsDeleteItem(shoppingListId: string, item: ItemToBuy) {
   }
 }
 export function initializeActiveList(dispatch: any, activeListId: string) {
-  console.log("triggered init");
+  // console.log("triggered init");
   const relevantItemsQuery = query(
     collection(db, "ShoppingLists", activeListId, "items")
   );

@@ -15,7 +15,6 @@ function App() {
     if (counter === 0) {
       initializeItems(dispatch);
       // setCounter(1);
-      console.log("triggered");
     }
   }, []);
 

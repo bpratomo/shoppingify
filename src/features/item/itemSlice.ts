@@ -106,7 +106,7 @@ export async function deleteItem(docId: string) {
 }
 
 export function initializeItems(dispatch: any) {
-  console.log("triggered init");
+  // console.log("triggered init");
   const relevantItemsQuery = query(collection(db, "items"));
   //
   //     name: "Avocado",
@@ -118,12 +118,12 @@ export function initializeItems(dispatch: any) {
 
   // createNewItem(testItem);
 
-  onSnapshot(relevantItemsQuery, function (snapshot) {
+  const unsubscribe = onSnapshot(relevantItemsQuery, function (snapshot) {
     snapshot.docChanges().forEach(function (change) {
       let item = <ItemType>change.doc.data();
-      console.log(change.doc.data());
+      // console.log(change.doc.data());
       item.id = change.doc.id;
-      console.log(item);
+      // console.log(item);
       if (change.type === "removed") {
         dispatch(removeItem(item));
       }
@@ -135,4 +135,5 @@ export function initializeItems(dispatch: any) {
       }
     });
   });
+  return unsubscribe;
 }

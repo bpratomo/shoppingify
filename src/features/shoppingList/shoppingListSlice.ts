@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 import { ItemType } from "../item/itemSlice";
 
+import { db } from "../firebase/firebaseConfig";
 import {
   addDoc,
   collection,
@@ -70,6 +71,9 @@ export const { addShoppingList, removeShoppingList, setActiveList } =
 export const getActiveListId = (state: RootState) =>
   state.shoppingList.activeListId;
 
+export const getShoppingLists = (state: RootState) =>
+  state.shoppingList.ShoppingLists;
+
 export default shoppingListSlice.reducer;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -105,10 +109,7 @@ export async function addNewItemInShoppingList(
 }
 
 export function initializeShoppingLists(dispatch: any) {
-  const relevantShoppingListsQuery = query(
-    collection(getFirestore(), "ShoppingLists"),
-    orderBy("timestamp", "desc")
-  );
+  const relevantShoppingListsQuery = query(collection(db, "ShoppingLists"));
 
   const sampleShoppingList: ShoppingListType = {
     name: "Test Shopping list",
@@ -117,13 +118,14 @@ export function initializeShoppingLists(dispatch: any) {
   };
 
   // createNewShoppingList(sampleShoppingList);
-  console.log("Shopping List created!");
-
+  console.log(relevantShoppingListsQuery);
   const unsubscribe = onSnapshot(
     relevantShoppingListsQuery,
     function (snapshot) {
       snapshot.docChanges().forEach(function (change) {
         let shoppingList = <ShoppingListType>change.doc.data();
+        shoppingList.id = change.doc.id;
+        console.log(shoppingList);
         if (change.type === "removed") {
           dispatch(removeShoppingList(shoppingList));
         } else if (change.type === "added") {

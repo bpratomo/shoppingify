@@ -4,6 +4,7 @@ import icon from "../assets/source.svg";
 import styles from "./ShoppingList.module.css";
 import {
   getActiveListId,
+  getShoppingLists,
   initializeShoppingLists,
   setActiveList,
 } from "../features/shoppingList/shoppingListSlice";
@@ -13,6 +14,7 @@ import { initializeActiveList } from "../features/activeList/activeListSlice";
 
 function ShoppingItem() {
   const activeListId = useAppSelector(getActiveListId);
+  const shoppingLists = useAppSelector(getShoppingLists);
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (!activeListId) {
@@ -21,8 +23,19 @@ function ShoppingItem() {
   }, []);
 
   useEffect(() => {
+    if (!activeListId && shoppingLists) {
+      const idList = shoppingLists
+        .filter((s) => s.id !== undefined)
+        .flatMap((s) => s.id);
+      if (idList[0]) {
+        dispatch(setActiveList(idList[0]));
+      }
+    }
+  }, [shoppingLists]);
+
+  useEffect(() => {
     if (activeListId) {
-      dispatch(setActiveList(activeListId));
+      console.log("Attempting initializing Active List");
       initializeActiveList(dispatch, activeListId);
     }
   }, [activeListId]);
