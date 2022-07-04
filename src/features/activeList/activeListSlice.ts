@@ -20,54 +20,46 @@ import { db } from "../firebase/firebaseConfig";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../../app/store";
+import { ItemType } from "../item/itemSlice";
 
 /////////////////////////////////////////////////////////////////////////////
 //REDUX PART
 /////////////////////////////////////////////////////////////////////////////
-export interface ActiveListState {
-  activeList: ShoppingListType;
+export interface ActiveListItemsState {
+  ActiveListItems: ItemToBuy[];
 }
 
-const initialState: ActiveListState = {
-  activeList: {
-    id: "",
-    name: "",
-    status: Status.Open,
-    items: [],
-  },
+const initialState: ActiveListItemsState = {
+  ActiveListItems: [],
 };
 
-export const activeListSlice = createSlice({
-  name: "activeList",
+export const ActiveListItemsSlice = createSlice({
+  name: "ActiveListItems",
   initialState,
   reducers: {
-    changeActiveList: (state, action: PayloadAction<ShoppingListType>) => {
-      state.activeList = action.payload;
-    },
-
     addItem: (state, action: PayloadAction<ItemToBuy>) => {
-      state.activeList.items.push(action.payload);
+      state.ActiveListItems.push(action.payload);
     },
 
     removeItem: (state, action: PayloadAction<string>) => {
-      state.activeList.items.filter((i) => i.id !== action.payload);
+      state.ActiveListItems.filter((i) => i.id !== action.payload);
     },
 
     updateItem: (state, action: PayloadAction<ItemToBuy>) => {
-      const updatedItems = state.activeList.items.map((i) =>
+      const updatedItems = state.ActiveListItems.map((i) =>
         i.id === action.payload.id ? action.payload : i
       );
-      state.activeList.items = updatedItems;
+      state.ActiveListItems = updatedItems;
     },
   },
 });
 
-export const { changeActiveList, addItem, removeItem, updateItem } =
-  activeListSlice.actions;
+export const { addItem, removeItem, updateItem } = ActiveListItemsSlice.actions;
 
-export const getActiveList = (state: RootState) => state.activeList.activeList;
+export const getActiveListItems = (state: RootState) =>
+  state.activeListItems.ActiveListItems;
 
-export default activeListSlice.reducer;
+export default ActiveListItemsSlice.reducer;
 
 /////////////////////////////////////////////////////////////////////////////
 //FIRESTORE PART
@@ -129,7 +121,7 @@ export async function fsDeleteItem(shoppingListId: string, item: ItemToBuy) {
     /* handle error */
   }
 }
-export function initializeActiveList(dispatch: any, activeListId: string) {
+export function initializeActiveListItems(dispatch: any, activeListId: string) {
   // console.log("triggered init");
   const relevantItemsQuery = query(
     collection(db, "ShoppingLists", activeListId, "items")
@@ -146,18 +138,20 @@ export function initializeActiveList(dispatch: any, activeListId: string) {
 
   const unsubscribe = onSnapshot(relevantItemsQuery, function (snapshot) {
     snapshot.docChanges().forEach(function (change) {
-      let item = <ItemToBuy>change.doc.data();
+      let itemToBuy = <ItemToBuy>change.doc.data();
+      let item = <ItemType>itemToBuy.item;
       console.log(change.doc.data());
-      item.id = change.doc.id;
-      console.log(item);
+      itemToBuy.id = change.doc.id;
+      itemToBuy.item = item;
+      console.log(itemToBuy);
       if (change.type === "removed") {
-        dispatch(removeItem(item.id));
+        dispatch(removeItem(itemToBuy.id));
       }
       if (change.type === "added") {
-        dispatch(addItem(item));
+        dispatch(addItem(itemToBuy));
       }
       if (change.type === "modified") {
-        dispatch(updateItem(item));
+        dispatch(updateItem(itemToBuy));
       }
     });
   });

@@ -3,27 +3,33 @@ import PropTypes from "prop-types";
 import icon from "../assets/source.svg";
 import styles from "./ShoppingList.module.css";
 import {
-  getActiveListId,
+  getActiveList,
   getShoppingLists,
   initializeShoppingLists,
+  ItemToBuy,
   setActiveList,
 } from "../features/shoppingList/shoppingListSlice";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { initializeActiveList } from "../features/activeList/activeListSlice";
+import {
+  getActiveListItems,
+  initializeActiveListItems,
+} from "../features/activeList/activeListSlice";
 
-function ShoppingItem() {
-  const activeListId = useAppSelector(getActiveListId);
+function ShoppingList({}) {
+  const activeList = useAppSelector(getActiveList);
+  const activeListItems = useAppSelector(getActiveListItems);
   const shoppingLists = useAppSelector(getShoppingLists);
   const dispatch = useAppDispatch();
+
+  const [categories, setCategories] = useState<string[]>([]);
+
   useEffect(() => {
-    if (!activeListId) {
-      initializeShoppingLists(dispatch);
-    }
+    initializeShoppingLists(dispatch);
   }, []);
 
   useEffect(() => {
-    if (!activeListId && shoppingLists) {
+    if (!activeList && shoppingLists) {
       const idList = shoppingLists
         .filter((s) => s.id !== undefined)
         .flatMap((s) => s.id);
@@ -34,42 +40,53 @@ function ShoppingItem() {
   }, [shoppingLists]);
 
   useEffect(() => {
-    if (activeListId) {
-      console.log("Attempting initializing Active List");
-      initializeActiveList(dispatch, activeListId);
+    if (activeList) {
+      initializeActiveListItems(dispatch, activeList.id ? activeList.id : "");
     }
-  }, [activeListId]);
+  }, [activeList]);
+
+  useEffect(() => {
+    if (activeListItems) {
+      console.log(`active List: ${activeListItems}`);
+      const realCategories = activeListItems.map((i) => i.item.category);
+      // .filter((i) => i);
+      console.log(realCategories);
+      const distinctCategories = [...new Set(realCategories)];
+      setCategories(distinctCategories);
+      console.log(`distinct categories: ${distinctCategories}`);
+    }
+  }, [activeListItems]);
 
   return (
-    <div className={styles.item}>
-      <div className={styles.item_text}>Pre-cooked corn</div>
-      <div className={`${styles.item_quantity} ${styles.edit}`}>
-        <button className={styles.delete}>
-          <i className="fa fa-solid fa-trash" aria-hidden="true"></i>
-        </button>
-        <div className={styles.item_quantity_adjustment}>
-          <button className={styles.add}>
-            <i className="fa fa-solid fa-plus"></i>
-          </button>
-          <AddItemBox />
-          <div className={styles.counter_container}>
-            <div className={styles.item_quantity_counter}>3pcs</div>
-          </div>{" "}
-          <button className={styles.substract}>
-            <i className="fa fa-solid fa-minus" aria-hidden="true"></i>
-          </button>
-        </div>{" "}
+    <div className={styles.base}>
+      <div className={styles.container}>
+        <ShoppingHero />
+        <section className={styles.title}>
+          <div className={styles.title_text}>
+            {activeList ? activeList.name : "Shopping List"}
+          </div>
+          <div className={styles.title_edit}>
+            <i className="fa fa-pencil" aria-hidden="true"></i>
+          </div>
+        </section>
+        {categories.length === 0 ? (
+          <h3>Shopping list is empty!</h3>
+        ) : (
+          categories.map((c) => (
+            <ShoppingCategoryContainer
+              category={c}
+              items={
+                activeListItems
+                  ? activeListItems.filter((i) => i.item.category === c)
+                  : []
+              }
+            />
+          ))
+        )}
       </div>
+      <MarkClosedBox />
+      <AddItemBox />
     </div>
-  );
-}
-
-function ShoppingCategoryContainer() {
-  return (
-    <section className={styles.category_container}>
-      <div className={styles.category_title}>Fruit and vegetables</div>
-      <ShoppingItem />
-    </section>
   );
 }
 
@@ -87,6 +104,52 @@ function ShoppingHero() {
   );
 }
 
+interface ShoppingCategoryContainerProps {
+  category: string;
+  items: ItemToBuy[];
+}
+
+function ShoppingCategoryContainer(props: ShoppingCategoryContainerProps) {
+  return (
+    <section className={styles.category_container}>
+      <div className={styles.category_title}>{props.category}</div>
+      {props.items.map((i) => (
+        <ShoppingItem item={i} />
+      ))}
+    </section>
+  );
+}
+
+interface ShoppingItemProps {
+  item: ItemToBuy;
+}
+
+function ShoppingItem(props: ShoppingItemProps) {
+  return (
+    <div className={styles.item}>
+      <div className={styles.item_text}>{props.item.item.name}</div>
+      <div className={`${styles.item_quantity} ${styles.edit}`}>
+        <button className={styles.delete}>
+          <i className="fa fa-solid fa-trash" aria-hidden="true"></i>
+        </button>
+        <div className={styles.item_quantity_adjustment}>
+          <button className={styles.add}>
+            <i className="fa fa-solid fa-plus"></i>
+          </button>
+          <AddItemBox />
+          <div className={styles.counter_container}>
+            <div className={styles.item_quantity_counter}>
+              {`${props.item.quantity}pcs`}
+            </div>
+          </div>
+          <button className={styles.substract}>
+            <i className="fa fa-solid fa-minus" aria-hidden="true"></i>
+          </button>
+        </div>{" "}
+      </div>
+    </div>
+  );
+}
 function AddItemBox() {
   return (
     <section id={styles.input_box_container} className={styles.hide}>
@@ -109,25 +172,6 @@ function MarkClosedBox() {
       <button className={styles.finish_cancel}>Cancel</button>
       <button className={styles.finish_complete}>Complete</button>
     </section>
-  );
-}
-
-function ShoppingList({}) {
-  return (
-    <div className={styles.base}>
-      <div className={styles.container}>
-        <ShoppingHero />
-        <section className={styles.title}>
-          <div className={styles.title_text}>Shopping list</div>
-          <div className={styles.title_edit}>
-            <i className="fa fa-pencil" aria-hidden="true"></i>
-          </div>
-        </section>
-        <ShoppingCategoryContainer />
-      </div>
-      <MarkClosedBox />
-      <AddItemBox />
-    </div>
   );
 }
 

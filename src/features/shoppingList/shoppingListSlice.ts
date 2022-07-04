@@ -40,11 +40,13 @@ export interface ItemToBuy {
 export interface ShoppingListState {
   ShoppingLists: ShoppingListType[];
   activeListId: string;
+  activeList: ShoppingListType | undefined;
 }
 
 const initialState: ShoppingListState = {
   ShoppingLists: [],
   activeListId: "",
+  activeList: undefined,
 };
 
 export const shoppingListSlice = createSlice({
@@ -60,7 +62,14 @@ export const shoppingListSlice = createSlice({
     },
 
     setActiveList: (state, action: PayloadAction<string>) => {
-      state.activeListId = action.payload;
+      const activeList = state.ShoppingLists.filter(
+        (s) => s.id === action.payload
+      )[0];
+      return {
+        ...state,
+        activeListId: action.payload,
+        activeList: activeList,
+      };
     },
   },
 });
@@ -68,8 +77,8 @@ export const shoppingListSlice = createSlice({
 export const { addShoppingList, removeShoppingList, setActiveList } =
   shoppingListSlice.actions;
 
-export const getActiveListId = (state: RootState) =>
-  state.shoppingList.activeListId;
+export const getActiveList = (state: RootState) =>
+  state.shoppingList.activeList;
 
 export const getShoppingLists = (state: RootState) =>
   state.shoppingList.ShoppingLists;
