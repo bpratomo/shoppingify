@@ -14,6 +14,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDocs,
 } from "firebase/firestore";
 
 import { db } from "../firebase/firebaseConfig";
@@ -64,6 +65,32 @@ export default ActiveListItemsSlice.reducer;
 /////////////////////////////////////////////////////////////////////////////
 //FIRESTORE PART
 /////////////////////////////////////////////////////////////////////////////
+
+export async function fsAddNewItem(shoppingListId: string, item: ItemToBuy) {
+  const checkExistQuery = query(
+    collection(db, "ShoppingLists", shoppingListId, "items")
+  );
+  const docs = await getDocs(checkExistQuery);
+  const docMatch = docs.docs.filter(
+    (d) => d.data().item.name === item.item.name
+  );
+  let docRef;
+  let previousQuantity;
+
+  let newItem;
+  if (docMatch.length === 0) {
+    fsCreateNewItemToBuy(shoppingListId, item);
+  } else {
+    docRef = docMatch[0];
+    previousQuantity = docRef.data().quantity;
+    newItem = {
+      id: docRef.id,
+      item: docRef.data().item,
+      quantity: previousQuantity + 1,
+    };
+    fsUpdateItem(shoppingListId, <ItemToBuy>newItem);
+  }
+}
 export async function fsCreateNewItemToBuy(
   shoppingListId: string,
   item: ItemToBuy
@@ -92,7 +119,10 @@ export async function fsUpdateItem(shoppingListId: string, item: ItemToBuy) {
         item.id
       );
 
-      await updateDoc(docRef, { item });
+      await updateDoc(docRef, {
+        item: item.item,
+        quantity: item.quantity,
+      });
     } else {
       alert("Item not valid");
     }

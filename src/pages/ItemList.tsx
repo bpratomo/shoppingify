@@ -1,12 +1,22 @@
 import { useState } from "react";
 import styles from "./ItemList.module.css";
 import CategoryContainer from "../components/CategoryContainer/CategoryContainer";
-import { getItems } from "../features/item/itemSlice";
+import { getItems, ItemType } from "../features/item/itemSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {
+  getActiveList,
+  ItemToBuy,
+} from "../features/shoppingList/shoppingListSlice";
+import {
+  fsAddNewItem,
+  fsCreateNewItemToBuy,
+} from "../features/activeList/activeListSlice";
 
 function ItemList({}) {
   const [searchText, setSearchText] = useState("");
   const items = useAppSelector(getItems);
+  const dispatch = useAppDispatch();
+  const activeList = useAppSelector(getActiveList);
   const relevantItems =
     items.length > 0
       ? items.filter((i) =>

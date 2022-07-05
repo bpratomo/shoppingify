@@ -24,6 +24,14 @@ function ShoppingList({}) {
 
   const [categories, setCategories] = useState<string[]>([]);
 
+  enum ActiveDialog {
+    addItem,
+    closeList,
+    none,
+  }
+
+  const [dialog, setDialog] = useState<ActiveDialog>(ActiveDialog.none);
+
   useEffect(() => {
     initializeShoppingLists(dispatch);
   }, []);
@@ -84,8 +92,8 @@ function ShoppingList({}) {
           ))
         )}
       </div>
-      <MarkClosedBox />
-      <AddItemBox />
+      {dialog === ActiveDialog.closeList && <MarkClosedBox />}
+      {dialog === ActiveDialog.addItem && <AddItemBox />}
     </div>
   );
 }
@@ -136,7 +144,6 @@ function ShoppingItem(props: ShoppingItemProps) {
           <button className={styles.add}>
             <i className="fa fa-solid fa-plus"></i>
           </button>
-          <AddItemBox />
           <div className={styles.counter_container}>
             <div className={styles.item_quantity_counter}>
               {`${props.item.quantity}pcs`}
@@ -152,7 +159,7 @@ function ShoppingItem(props: ShoppingItemProps) {
 }
 function AddItemBox() {
   return (
-    <section id={styles.input_box_container} className={styles.hide}>
+    <section id={styles.input_box_container}>
       <div className={styles.input_box}>
         {" "}
         <input
