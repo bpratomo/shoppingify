@@ -12,6 +12,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
+  fsUpdateQuantity,
   getActiveListItems,
   initializeActiveListItems,
 } from "../features/activeList/activeListSlice";
@@ -133,23 +134,42 @@ interface ShoppingItemProps {
 }
 
 function ShoppingItem(props: ShoppingItemProps) {
+  const [editActive, setEditActive] = useState<boolean>(false);
+  function toggleActive() {
+    setEditActive(!editActive);
+  }
+  const activeList = useAppSelector(getActiveList);
+
+  function adjustQuantity(delta: number) {
+    if (activeList && activeList.id) {
+      fsUpdateQuantity(activeList.id, props.item, props.item.quantity + delta);
+    } else alert("NOT IMPLEMENTED: active list is undefined");
+  }
   return (
     <div className={styles.item}>
       <div className={styles.item_text}>{props.item.item.name}</div>
-      <div className={`${styles.item_quantity} ${styles.edit}`}>
+      <div
+        className={`${styles.item_quantity} ${editActive ? styles.edit : ""}`}
+      >
         <button className={styles.delete}>
           <i className="fa fa-solid fa-trash" aria-hidden="true"></i>
         </button>
         <div className={styles.item_quantity_adjustment}>
-          <button className={styles.add}>
+          <button className={styles.add} onClick={() => adjustQuantity(1)}>
             <i className="fa fa-solid fa-plus"></i>
           </button>
           <div className={styles.counter_container}>
-            <div className={styles.item_quantity_counter}>
+            <div
+              className={styles.item_quantity_counter}
+              onClick={toggleActive}
+            >
               {`${props.item.quantity}pcs`}
             </div>
           </div>
-          <button className={styles.substract}>
+          <button
+            className={styles.substract}
+            onClick={() => adjustQuantity(-1)}
+          >
             <i className="fa fa-solid fa-minus" aria-hidden="true"></i>
           </button>
         </div>{" "}

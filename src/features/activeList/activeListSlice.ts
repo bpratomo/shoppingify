@@ -131,6 +131,19 @@ export async function fsUpdateItem(shoppingListId: string, item: ItemToBuy) {
   }
 }
 
+export async function fsUpdateQuantity(
+  shoppingListId: string,
+  item: ItemToBuy,
+  quantity: number
+) {
+  const newItem = {
+    id: item.id,
+    item: item.item,
+    quantity: quantity,
+  };
+  fsUpdateItem(shoppingListId, newItem);
+}
+
 export async function fsDeleteItem(shoppingListId: string, item: ItemToBuy) {
   try {
     if (item.id) {

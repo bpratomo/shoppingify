@@ -31,7 +31,7 @@ export interface ShoppingListType {
 export interface ItemToBuy {
   id?: string;
   item: ItemType;
-  quantity: Number;
+  quantity: number;
 }
 
 /////////////////////////////////////////////////////////////////////////////
