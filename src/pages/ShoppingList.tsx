@@ -8,6 +8,7 @@ import {
   initializeShoppingLists,
   ItemToBuy,
   setActiveList,
+  updateShoppingListName,
 } from "../features/shoppingList/shoppingListSlice";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -26,7 +27,7 @@ function ShoppingList({}) {
   const [categories, setCategories] = useState<string[]>([]);
 
   enum ActiveDialog {
-    addItem,
+    rename,
     closeList,
     none,
   }
@@ -52,7 +53,7 @@ function ShoppingList({}) {
     if (activeList) {
       initializeActiveListItems(dispatch, activeList.id ? activeList.id : "");
     }
-  }, [activeList]);
+  }, [activeList ? activeList.id : activeList]);
 
   useEffect(() => {
     if (activeListItems) {
@@ -74,7 +75,10 @@ function ShoppingList({}) {
           <div className={styles.title_text}>
             {activeList ? activeList.name : "Shopping List"}
           </div>
-          <div className={styles.title_edit}>
+          <div
+            className={styles.title_edit}
+            onClick={() => setDialog(ActiveDialog.rename)}
+          >
             <i className="fa fa-pencil" aria-hidden="true"></i>
           </div>
         </section>
@@ -94,7 +98,7 @@ function ShoppingList({}) {
         )}
       </div>
       {dialog === ActiveDialog.closeList && <MarkClosedBox />}
-      {dialog === ActiveDialog.addItem && <AddItemBox />}
+      {dialog === ActiveDialog.rename && <RenameBox toggle={setDialog} />}
     </div>
   );
 }
@@ -177,7 +181,23 @@ function ShoppingItem(props: ShoppingItemProps) {
     </div>
   );
 }
-function AddItemBox() {
+function RenameBox(props: any) {
+  const activeList = useAppSelector(getActiveList);
+  const [tempName, setTempName] = useState("");
+  useEffect(() => {
+    if (activeList) {
+      setTempName(activeList.name);
+    }
+  }, [activeList]);
+  function handleSubmit() {
+    if (activeList && activeList.id) {
+      updateShoppingListName(activeList.id, tempName);
+      props.toggle();
+    } else {
+      alert("NOT IMPLEMENTED");
+    }
+  }
+
   return (
     <section id={styles.input_box_container}>
       <div className={styles.input_box}>
@@ -186,8 +206,12 @@ function AddItemBox() {
           type="text"
           className={styles.input_box_form}
           placeholder="Enter a name"
+          value={tempName}
+          onChange={(e) => setTempName(e.target.value)}
         />
-        <button className={styles.input_button}>Save</button>
+        <button className={styles.input_button} onClick={handleSubmit}>
+          Save
+        </button>
       </div>{" "}
     </section>
   );

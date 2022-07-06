@@ -7,10 +7,12 @@ import { db } from "../firebase/firebaseConfig";
 import {
   addDoc,
   collection,
+  doc,
   getFirestore,
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -61,6 +63,21 @@ export const shoppingListSlice = createSlice({
       state.ShoppingLists.filter((i) => i != action.payload);
     },
 
+    updateShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
+      const updatedShoppingLists = state.ShoppingLists.map((s) =>
+        s.id === action.payload.id ? action.payload : s
+      );
+      return {
+        ...state,
+        ShoppingLists: updatedShoppingLists,
+        activeList:
+          state.activeListId === action.payload.id
+            ? action.payload
+            : state.activeList,
+      };
+      state.ShoppingLists = updatedShoppingLists;
+    },
+
     setActiveList: (state, action: PayloadAction<string>) => {
       const activeList = state.ShoppingLists.filter(
         (s) => s.id === action.payload
@@ -74,8 +91,12 @@ export const shoppingListSlice = createSlice({
   },
 });
 
-export const { addShoppingList, removeShoppingList, setActiveList } =
-  shoppingListSlice.actions;
+export const {
+  addShoppingList,
+  removeShoppingList,
+  setActiveList,
+  updateShoppingList,
+} = shoppingListSlice.actions;
 
 export const getActiveList = (state: RootState) =>
   state.shoppingList.activeList;
@@ -97,6 +118,21 @@ export async function createNewShoppingList(shoppingList: ShoppingListType) {
     });
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function updateShoppingListName(
+  shoppingListId: string,
+  newName: string
+) {
+  try {
+    const docRef = doc(getFirestore(), "ShoppingLists", shoppingListId);
+    await updateDoc(docRef, {
+      name: newName,
+    });
+  } catch (e) {
+    /* handle error */
+    console.error(e);
   }
 }
 
@@ -137,8 +173,12 @@ export function initializeShoppingLists(dispatch: any) {
         console.log(shoppingList);
         if (change.type === "removed") {
           dispatch(removeShoppingList(shoppingList));
-        } else if (change.type === "added") {
+        }
+        if (change.type === "added") {
           dispatch(addShoppingList(shoppingList));
+        }
+        if (change.type === "modified") {
+          dispatch(updateShoppingList(shoppingList));
         }
       });
     }
