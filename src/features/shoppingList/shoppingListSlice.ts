@@ -121,19 +121,43 @@ export async function createNewShoppingList(shoppingList: ShoppingListType) {
   }
 }
 
-export async function updateShoppingListName(
+export async function fsUpdateShoppingList(
   shoppingListId: string,
-  newName: string
+  shoppingList: ShoppingListType
 ) {
   try {
     const docRef = doc(getFirestore(), "ShoppingLists", shoppingListId);
     await updateDoc(docRef, {
-      name: newName,
+      name: shoppingList.name,
+      status: shoppingList.status,
+      items: shoppingList.items,
     });
   } catch (e) {
     /* handle error */
     console.error(e);
   }
+}
+
+export async function updateShoppingListName(
+  newName: string,
+  previousShoppingList: ShoppingListType
+) {
+  const newShoppingList = {
+    ...previousShoppingList,
+    name: newName,
+  };
+  fsUpdateShoppingList(previousShoppingList.id || "", newShoppingList);
+}
+
+export async function updateShoppingListStatus(
+  newStatus: Status,
+  previousShoppingList: ShoppingListType
+) {
+  const newShoppingList = {
+    ...previousShoppingList,
+    status: newStatus,
+  };
+  fsUpdateShoppingList(previousShoppingList.id || "", newShoppingList);
 }
 
 export async function addNewItemInShoppingList(

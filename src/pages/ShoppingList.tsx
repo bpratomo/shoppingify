@@ -8,7 +8,9 @@ import {
   initializeShoppingLists,
   ItemToBuy,
   setActiveList,
+  Status,
   updateShoppingListName,
+  updateShoppingListStatus,
 } from "../features/shoppingList/shoppingListSlice";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -18,6 +20,11 @@ import {
   initializeActiveListItems,
 } from "../features/activeList/activeListSlice";
 
+enum ActiveDialog {
+  rename,
+  closeList,
+}
+
 function ShoppingList({}) {
   const activeList = useAppSelector(getActiveList);
   const activeListItems = useAppSelector(getActiveListItems);
@@ -26,13 +33,7 @@ function ShoppingList({}) {
 
   const [categories, setCategories] = useState<string[]>([]);
 
-  enum ActiveDialog {
-    rename,
-    closeList,
-    none,
-  }
-
-  const [dialog, setDialog] = useState<ActiveDialog>(ActiveDialog.none);
+  const [dialog, setDialog] = useState<ActiveDialog>(ActiveDialog.closeList);
 
   useEffect(() => {
     initializeShoppingLists(dispatch);
@@ -191,8 +192,8 @@ function RenameBox(props: any) {
   }, [activeList]);
   function handleSubmit() {
     if (activeList && activeList.id) {
-      updateShoppingListName(activeList.id, tempName);
-      props.toggle();
+      updateShoppingListName(tempName, activeList);
+      props.toggle(ActiveDialog.closeList);
     } else {
       alert("NOT IMPLEMENTED");
     }
@@ -218,10 +219,26 @@ function RenameBox(props: any) {
 }
 
 function MarkClosedBox() {
+  const activeList = useAppSelector(getActiveList);
+  function handleSubmit(status: Status) {
+    activeList
+      ? updateShoppingListStatus(status, activeList)
+      : alert("NOT IMPLEMENTED");
+  }
   return (
     <section id={styles.input_box_container} className="">
-      <button className={styles.finish_cancel}>Cancel</button>
-      <button className={styles.finish_complete}>Complete</button>
+      <button
+        className={styles.finish_cancel}
+        onClick={() => handleSubmit(Status.Cancelled)}
+      >
+        Cancel
+      </button>
+      <button
+        className={styles.finish_complete}
+        onClick={() => handleSubmit(Status.Completed)}
+      >
+        Complete
+      </button>
     </section>
   );
 }
