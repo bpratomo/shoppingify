@@ -1,0 +1,63 @@
+.base{
+    background-color: #fafafe ;
+    padding: 2.5rem;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    border:1px solid red;
+    position:relative
+
+}
+.form{
+    flex-grow: 1;
+    display:flex;
+}
+
+.form_short{
+    padding:1rem;
+    margin-bottom:1.5rem;
+    background-color: #fafafe ;
+    border:2px solid  #BDBDBD;
+    border-radius: 0.5rem;
+    color: #BDBDBD;
+    width:100%
+;
+
+}
+
+.form_short:focus{
+    border-color: #F9A109 ;;
+}
+
+#input_box_container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-sizing: border-box;
+    padding:2rem 2rem;
+    align-self:stretch;
+    margin:0px;
+    width:100%;
+    left:0;
+    bottom:0;
+    right:0;
+    position:absolute;
+    
+    
+
+}
+
+.cancel{
+    background:none;
+    color:black;
+    border:none;
+    margin:3rem
+}
+
+.save{
+background:#F9A109 ;
+    color:white;
+    border-radius:1rem;
+    border:solid #F9A109 ;
+    padding:1rem 2rem
+}

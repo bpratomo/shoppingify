@@ -24,8 +24,11 @@ enum ActiveDialog {
   rename,
   closeList,
 }
+interface ShoppingListProps {
+  activateAddItem: () => void;
+}
 
-function ShoppingList({}) {
+function ShoppingList(props: ShoppingListProps) {
   const activeList = useAppSelector(getActiveList);
   const activeListItems = useAppSelector(getActiveListItems);
   const shoppingLists = useAppSelector(getShoppingLists);
@@ -71,7 +74,7 @@ function ShoppingList({}) {
   return (
     <div className={styles.base}>
       <div className={styles.container}>
-        <ShoppingHero />
+        <ShoppingHero activateAddItem={props.activateAddItem} />
         <section className={styles.title}>
           <div className={styles.title_text}>
             {activeList ? activeList.name : "Shopping List"}
@@ -104,7 +107,11 @@ function ShoppingList({}) {
   );
 }
 
-function ShoppingHero() {
+interface ShoppingHeroProps {
+  activateAddItem: () => void;
+}
+
+function ShoppingHero(props: ShoppingHeroProps) {
   return (
     <section className={styles.hero}>
       <div className={styles.hero_icon_container}>
@@ -112,7 +119,12 @@ function ShoppingHero() {
       </div>
       <div className={styles.hero_text_container}>
         <div className={styles.hero_text}>Didn't find what you need?</div>
-        <button className={styles.hero_add_button}>Add Item</button>
+        <button
+          className={styles.hero_add_button}
+          onClick={props.activateAddItem}
+        >
+          Add Item
+        </button>
       </div>
     </section>
   );
