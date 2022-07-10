@@ -39,10 +39,12 @@ function App() {
     <div className="App">
       <Sidebar />
       <ItemList />
-      {activeSidebar === ActiveSidebar.AddItem && <AddItem />}
+      {activeSidebar === ActiveSidebar.AddItem && (
+        <AddItem activateShoppingList={activateShoppingList} />
+      )}
       {activeSidebar === ActiveSidebar.ShoppingList && (
         <ShoppingList activateAddItem={activateAddItem} />
-      )}
+      )}{" "}
     </div>
   );
 }

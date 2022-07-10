@@ -55,6 +55,7 @@ function ShoppingList(props: ShoppingListProps) {
 
   useEffect(() => {
     if (activeList) {
+      console.log("changed active list triggered!!");
       initializeActiveListItems(dispatch, activeList.id ? activeList.id : "");
     }
   }, [activeList ? activeList.id : activeList]);
