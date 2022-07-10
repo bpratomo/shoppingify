@@ -31,35 +31,10 @@ interface ShoppingListProps {
 function ShoppingList(props: ShoppingListProps) {
   const activeList = useAppSelector(getActiveList);
   const activeListItems = useAppSelector(getActiveListItems);
-  const shoppingLists = useAppSelector(getShoppingLists);
-  const dispatch = useAppDispatch();
 
   const [categories, setCategories] = useState<string[]>([]);
 
   const [dialog, setDialog] = useState<ActiveDialog>(ActiveDialog.closeList);
-
-  useEffect(() => {
-    initializeShoppingLists(dispatch);
-  }, []);
-
-  useEffect(() => {
-    if (!activeList && shoppingLists) {
-      const idList = shoppingLists
-        .filter((s) => s.id !== undefined)
-        .flatMap((s) => s.id);
-      if (idList[0]) {
-        dispatch(setActiveList(idList[0]));
-      }
-    }
-  }, [shoppingLists]);
-
-  useEffect(() => {
-    if (activeList) {
-      console.log("changed active list triggered!!");
-      initializeActiveListItems(dispatch, activeList.id ? activeList.id : "");
-    }
-  }, [activeList ? activeList.id : activeList]);
-
   useEffect(() => {
     if (activeListItems) {
       console.log(`active List: ${activeListItems}`);
