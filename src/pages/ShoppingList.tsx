@@ -15,6 +15,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
+  fsDeleteItem,
   fsUpdateQuantity,
   getActiveListItems,
   initializeActiveListItems,
@@ -39,7 +40,6 @@ function ShoppingList(props: ShoppingListProps) {
     if (activeListItems) {
       console.log(`active List: ${activeListItems}`);
       const realCategories = activeListItems.map((i) => i.item.category);
-      // .filter((i) => i);
       console.log(realCategories);
       const distinctCategories = [...new Set(realCategories)];
       setCategories(distinctCategories);
@@ -65,7 +65,7 @@ function ShoppingList(props: ShoppingListProps) {
         {categories.length === 0 ? (
           <h3>Shopping list is empty!</h3>
         ) : (
-          categories.map((c) => (
+          categories.map((c, i) => (
             <ShoppingCategoryContainer
               category={c}
               items={
@@ -73,6 +73,7 @@ function ShoppingList(props: ShoppingListProps) {
                   ? activeListItems.filter((i) => i.item.category === c)
                   : []
               }
+              key={i}
             />
           ))
         )}
@@ -116,7 +117,7 @@ function ShoppingCategoryContainer(props: ShoppingCategoryContainerProps) {
     <section className={styles.category_container}>
       <div className={styles.category_title}>{props.category}</div>
       {props.items.map((i) => (
-        <ShoppingItem item={i} />
+        <ShoppingItem item={i} key={i.id} />
       ))}
     </section>
   );
@@ -135,20 +136,63 @@ function ShoppingItem(props: ShoppingItemProps) {
 
   function adjustQuantity(delta: number) {
     if (activeList && activeList.id) {
-      fsUpdateQuantity(activeList.id, props.item, props.item.quantity + delta);
+      if (props.item.quantity + delta === 0) {
+        deleteItem();
+      } else {
+        fsUpdateQuantity(
+          activeList.id,
+          props.item,
+          props.item.quantity + delta
+        );
+      }
     } else alert("NOT IMPLEMENTED: active list is undefined");
   }
+
+  function deleteItem() {
+    console.log("triggered");
+    if (activeList && activeList.id) {
+      fsDeleteItem(activeList.id, props.item);
+    }
+  }
+
+  function handleOnBlur(e: any) {
+    e.stopPropagation();
+    console.log("Target");
+
+    console.log(e.target);
+    console.log("Current target");
+
+    console.log(e.currentTarget);
+    console.log("related Target");
+
+    console.log(e.relatedTarget);
+
+    if (e.target.contains(e.relatedTarget)) {
+      return;
+    }
+
+    setEditActive(false);
+  }
   return (
-    <div className={styles.item}>
+    <div
+      className={styles.item}
+      id={props.item.id}
+      onBlur={handleOnBlur}
+      tabIndex={0}
+    >
       <div className={styles.item_text}>{props.item.item.name}</div>
       <div
         className={`${styles.item_quantity} ${editActive ? styles.edit : ""}`}
       >
-        <button className={styles.delete}>
+        <button className={styles.delete} onClick={deleteItem}>
           <i className="fa fa-solid fa-trash" aria-hidden="true"></i>
         </button>
         <div className={styles.item_quantity_adjustment}>
-          <button className={styles.add} onClick={() => adjustQuantity(1)}>
+          <button
+            className={styles.add}
+            tabIndex={0}
+            onClick={() => adjustQuantity(1)}
+          >
             <i className="fa fa-solid fa-plus"></i>
           </button>
           <div className={styles.counter_container}>

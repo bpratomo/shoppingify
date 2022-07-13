@@ -43,7 +43,11 @@ export const ActiveListItemsSlice = createSlice({
     },
 
     removeItem: (state, action: PayloadAction<string>) => {
-      state.ActiveListItems.filter((i) => i.id !== action.payload);
+      console.log(`${action.payload}`);
+      const filtered = state.ActiveListItems.filter(
+        (i) => i.id !== action.payload
+      );
+      state.ActiveListItems = filtered;
     },
 
     updateItem: (state, action: PayloadAction<ItemToBuy>) => {
@@ -144,7 +148,7 @@ export async function fsUpdateQuantity(
   fsUpdateItem(shoppingListId, newItem);
 }
 
-export async function fsDeleteItem(shoppingListId: string, item: ItemToBuy) {
+export async function fsDeleteItem(shoppingListId: any, item: ItemToBuy) {
   try {
     if (item.id) {
       const docRef = doc(
@@ -183,10 +187,8 @@ export function initializeActiveListItems(dispatch: any, activeListId: string) {
     snapshot.docChanges().forEach(function (change) {
       let itemToBuy = <ItemToBuy>change.doc.data();
       let item = <ItemType>itemToBuy.item;
-      console.log(change.doc.data());
       itemToBuy.id = change.doc.id;
       itemToBuy.item = item;
-      console.log(itemToBuy);
       if (change.type === "removed") {
         dispatch(removeItem(itemToBuy.id));
       }

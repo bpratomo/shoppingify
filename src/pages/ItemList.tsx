@@ -52,7 +52,7 @@ function ItemList({}) {
       </section>
 
       {categories.map((c) => (
-        <CategoryContainer category={c} items={items} key={c} />
+        <CategoryContainer category={c} items={relevantItems} key={c} />
       ))}
     </div>
   );

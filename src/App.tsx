@@ -20,6 +20,9 @@ function App() {
     ShoppingList,
   }
 
+  const activeList = useAppSelector(getActiveList);
+  const shoppingLists = useAppSelector(getShoppingLists);
+
   const [counter, setCounter] = useState(0);
   const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>(
     ActiveSidebar.ShoppingList
@@ -32,20 +35,6 @@ function App() {
   function activateShoppingList() {
     setActiveSidebar(ActiveSidebar.ShoppingList);
   }
-  const activeList = useAppSelector(getActiveList);
-
-  const shoppingLists = useAppSelector(getShoppingLists);
-  useEffect(() => {
-    if (!activeList && shoppingLists) {
-      console.log("init triggered");
-      const idList = shoppingLists
-        .filter((s) => s.id !== undefined)
-        .flatMap((s) => s.id);
-      if (idList[0]) {
-        dispatch(setActiveList(idList[0]));
-      }
-    }
-  }, [shoppingLists]);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -54,12 +43,16 @@ function App() {
       initializeShoppingLists(dispatch);
     }
   }, []);
+
   useEffect(() => {
-    if (activeList) {
-      console.log("changed active list triggered!!");
-      initializeActiveListItems(dispatch, activeList.id ? activeList.id : "");
+    if (shoppingLists.length > 0 && !activeList) {
+      const withId = shoppingLists.filter((s) => (s.id ? true : false));
+      if (withId[0].id) {
+        dispatch(setActiveList(withId[0].id));
+        initializeActiveListItems(dispatch, withId[0].id);
+      }
     }
-  }, [activeList]);
+  }, [shoppingLists]);
 
   return (
     <div className="App">
