@@ -4,6 +4,7 @@ import Item from "../Item";
 interface CategoryContainerProps {
   category: string;
   items: ItemType[];
+  activateItemDesc: (i: ItemType) => void;
 }
 export default function CategoryContainer(props: CategoryContainerProps) {
   return (
@@ -13,7 +14,11 @@ export default function CategoryContainer(props: CategoryContainerProps) {
         {props.items
           .filter((i) => i.category === props.category)
           .map((i) => (
-            <Item item={i} key={i.id} />
+            <Item
+              item={i}
+              key={i.id}
+              activateItemDesc={props.activateItemDesc}
+            />
           ))}
       </div>
     </section>

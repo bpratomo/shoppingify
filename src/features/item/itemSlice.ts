@@ -57,7 +57,8 @@ export const itemSlice = createSlice({
     },
 
     removeItem: (state, action: PayloadAction<ItemType>) => {
-      state.items.filter((i) => i.id != action.payload.id);
+      const filtered = state.items.filter((i) => i.id != action.payload.id);
+      state.items = filtered;
     },
     updateItem: (state, action: PayloadAction<ItemType>) => {
       return {

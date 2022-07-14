@@ -1,0 +1,72 @@
+.base{
+    padding:1rem 2rem;
+    display:flex;
+    flex-direction: column;
+    gap:2rem;
+    position:relative;
+    font-size:1.5rem
+}
+
+.backtext{
+    color: #F9A109;
+    font-size:1rem
+
+}
+
+
+.imageContainer{
+    max-width: 100%;
+    
+}
+
+
+.imageContainer > img {
+    max-width:100%;
+    border-radius:1rem
+}
+
+.label{
+color: #C1C1C4;
+font-size: 0.8rem;
+
+}
+
+
+.delete{
+    background:none;
+    color:black;
+    border:none;
+    margin:3rem;
+    font-size:1.1rem
+
+}
+
+.add{
+background:#F9A109 ;
+    color:white;
+    border-radius:1rem;
+    border:solid #F9A109 ;
+    padding:1rem 2rem;
+    font-size:1.1rem
+}
+.content{
+    font-size:1.7rem
+}
+
+#input_box_container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-sizing: border-box;
+    padding:2rem 2rem;
+    align-self:stretch;
+    margin:0px;
+    width:100%;
+    left:0;
+    bottom:0;
+    right:0;
+    position:absolute;
+    
+    
+
+}

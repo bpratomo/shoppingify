@@ -12,7 +12,11 @@ import {
   fsCreateNewItemToBuy,
 } from "../features/activeList/activeListSlice";
 
-function ItemList({}) {
+interface ItemListProps {
+  activateItemDesc: (i: ItemType) => void;
+}
+
+function ItemList(props: ItemListProps) {
   const [searchText, setSearchText] = useState("");
   const items = useAppSelector(getItems);
   const dispatch = useAppDispatch();
@@ -52,7 +56,12 @@ function ItemList({}) {
       </section>
 
       {categories.map((c) => (
-        <CategoryContainer category={c} items={relevantItems} key={c} />
+        <CategoryContainer
+          category={c}
+          items={relevantItems}
+          key={c}
+          activateItemDesc={props.activateItemDesc}
+        />
       ))}
     </div>
   );

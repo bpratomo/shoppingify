@@ -4,11 +4,13 @@ import ItemList from "./pages/ItemList";
 import { Sidebar } from "./components/Sidebar";
 import ShoppingList from "./pages/ShoppingList";
 import { AddItem } from "./pages/AddItem";
+import { ItemDesc } from "./pages/ItemDesc";
 import { ItemType, getItems, initializeItems } from "./features/item/itemSlice";
 import {
   getActiveList,
   getShoppingLists,
   initializeShoppingLists,
+  ItemToBuy,
   setActiveList,
 } from "./features/shoppingList/shoppingListSlice";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
@@ -18,6 +20,7 @@ function App() {
   enum ActiveSidebar {
     AddItem,
     ShoppingList,
+    ItemDesc,
   }
 
   const activeList = useAppSelector(getActiveList);
@@ -28,12 +31,19 @@ function App() {
     ActiveSidebar.ShoppingList
   );
 
+  const [activeItem, setActiveItem] = useState<ItemType>();
+
   function activateAddItem() {
     setActiveSidebar(ActiveSidebar.AddItem);
   }
 
   function activateShoppingList() {
     setActiveSidebar(ActiveSidebar.ShoppingList);
+  }
+
+  function activateItemDesc(i: ItemType) {
+    setActiveItem(i);
+    setActiveSidebar(ActiveSidebar.ItemDesc);
   }
 
   const dispatch = useAppDispatch();
@@ -57,9 +67,15 @@ function App() {
   return (
     <div className="App">
       <Sidebar />
-      <ItemList />
+      <ItemList activateItemDesc={activateItemDesc} />
       {activeSidebar === ActiveSidebar.AddItem && (
         <AddItem activateShoppingList={activateShoppingList} />
+      )}
+      {activeSidebar === ActiveSidebar.ItemDesc && activeItem && (
+        <ItemDesc
+          item={activeItem}
+          activateShoppingList={activateShoppingList}
+        />
       )}
       {activeSidebar === ActiveSidebar.ShoppingList && (
         <ShoppingList activateAddItem={activateAddItem} />

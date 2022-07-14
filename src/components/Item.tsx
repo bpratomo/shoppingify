@@ -12,6 +12,7 @@ import {
 
 interface ItemProps {
   item: ItemType;
+  activateItemDesc: (i: ItemType) => void;
 }
 
 function Item(props: ItemProps) {
@@ -32,7 +33,9 @@ function Item(props: ItemProps) {
 
   return (
     <div className={styles.base}>
-      <div>{props.item.name}</div>
+      <div onClick={() => props.activateItemDesc(props.item)}>
+        {props.item.name}
+      </div>
       <i className="fas fa-plus" onClick={() => handleItemAdd()}></i>
     </div>
   );
