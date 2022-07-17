@@ -60,7 +60,7 @@ export const shoppingListSlice = createSlice({
     },
 
     removeShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
-      state.ShoppingLists.filter((i) => i != action.payload);
+      state.ShoppingLists.filter((i) => i !== action.payload);
     },
 
     updateShoppingList: (state, action: PayloadAction<ShoppingListType>) => {
@@ -196,7 +196,7 @@ export function initializeShoppingLists(dispatch: any) {
     relevantShoppingListsQuery,
     function (snapshot) {
       snapshot.docChanges().forEach(function (change) {
-        let rawShoppingList = <ShoppingListType>change.doc.data();
+        let rawShoppingList = change.doc.data() as ShoppingListType;
         console.log(rawShoppingList.createdDate);
         rawShoppingList.id = change.doc.id;
         let shoppingList = {

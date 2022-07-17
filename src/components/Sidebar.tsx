@@ -12,7 +12,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
   return (
     <div className={styles.base}>
       <div className={styles.logo}>
-        <img src={icon} className="" />
+        <img src={icon} alt="The app logo"  className="" />
       </div>
       <div className={styles.navIcons}>
         <div
@@ -21,7 +21,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
         >
           <div
             className={
-              props.activePage == ActivePage.ItemList
+              props.activePage === ActivePage.ItemList
                 ? styles.active
                 : styles.inactive
             }

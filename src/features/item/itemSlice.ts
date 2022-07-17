@@ -2,27 +2,19 @@
 //IMPORTS
 /////////////////////////////////////////////////////////////////////////////
 import {
-  createAsyncThunk,
   createSlice,
   PayloadAction,
-  ThunkDispatch,
 } from "@reduxjs/toolkit";
-import { RootState, AppThunk, store } from "../../app/store";
+import { RootState } from "../../app/store";
 import {
-  documentId,
-  where,
   doc,
   addDoc,
-  getDoc,
   deleteDoc,
   collection,
   onSnapshot,
-  orderBy,
   query,
-  DocumentData,
 } from "firebase/firestore";
 
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { db } from "../firebase/firebaseConfig";
 
 ////////////////////////////////////////////////////////////////////////////
@@ -57,7 +49,7 @@ export const itemSlice = createSlice({
     },
 
     removeItem: (state, action: PayloadAction<ItemType>) => {
-      const filtered = state.items.filter((i) => i.id != action.payload.id);
+      const filtered = state.items.filter((i) => i.id !== action.payload.id);
       state.items = filtered;
     },
     updateItem: (state, action: PayloadAction<ItemType>) => {
@@ -121,7 +113,7 @@ export function initializeItems(dispatch: any) {
 
   const unsubscribe = onSnapshot(relevantItemsQuery, function (snapshot) {
     snapshot.docChanges().forEach(function (change) {
-      let item = <ItemType>change.doc.data();
+      let item = change.doc.data() as ItemType;
       // console.log(change.doc.data());
       item.id = change.doc.id;
       // console.log(item);

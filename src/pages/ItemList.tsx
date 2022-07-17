@@ -2,10 +2,7 @@ import { useState } from "react";
 import styles from "./ItemList.module.css";
 import CategoryContainer from "../components/CategoryContainer/CategoryContainer";
 import { getItems, ItemType } from "../features/item/itemSlice";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import {
-  getActiveList,
-} from "../features/shoppingList/shoppingListSlice";
+import {  useAppSelector } from "../app/hooks";
 interface ItemListProps {
   activateItemDesc: (i: ItemType) => void;
 }

@@ -63,7 +63,7 @@ function App() {
       initializeItems(dispatch);
       initializeShoppingLists(dispatch);
     }
-  }, []);
+  }, [counter,dispatch]);
 
   useEffect(() => {
     if (shoppingLists.length > 0 && !activeList) {
@@ -72,7 +72,7 @@ function App() {
         dispatch(setActiveList(withId[0].id));
       }
     }
-  }, [shoppingLists]);
+  }, [shoppingLists,activeList,dispatch]);
 
   useEffect(() => {
     unsub();
@@ -81,7 +81,7 @@ function App() {
 
       return unsub;
     }
-  }, [activeListId]);
+  }, [activeListId,dispatch]);
 
   return (
     <div className="App">

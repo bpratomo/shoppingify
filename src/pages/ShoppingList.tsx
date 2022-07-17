@@ -84,7 +84,7 @@ function ShoppingHero(props: ShoppingHeroProps) {
   return (
     <section className={styles.hero}>
       <div className={styles.hero_icon_container}>
-        <img src={icon} className={styles.hero_icon} />
+        <img src={icon} className={styles.hero_icon} alt="Bottle icon" />
       </div>
       <div className={styles.hero_text_container}>
         <div className={styles.hero_text}>Didn't find what you need?</div>

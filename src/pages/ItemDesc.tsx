@@ -45,7 +45,7 @@ export const ItemDesc: FC<ItemDescProps> = (props) => {
         <i className="fas fa-long-arrow-alt-left"> </i> back
       </div>
       <div className={styles.imageContainer}>
-        <img src={props.item.imageUrl} />
+        <img src={props.item.imageUrl} alt="Item's image" />
       </div>
       <div className={styles.text}>
         <div className={styles.label}>name</div>

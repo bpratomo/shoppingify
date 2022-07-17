@@ -92,7 +92,7 @@ export async function fsAddNewItem(shoppingListId: string, item: ItemToBuy) {
       item: docRef.data().item,
       quantity: previousQuantity + 1,
     };
-    fsUpdateItem(shoppingListId, <ItemToBuy>newItem);
+    fsUpdateItem(shoppingListId, newItem as ItemToBuy);
   }
 }
 export async function fsCreateNewItemToBuy(
@@ -188,8 +188,8 @@ export function initializeActiveListItems(dispatch: any, activeListId: string) {
     console.log("snapshot triggered");
 
     snapshot.docChanges().forEach(function (change) {
-      let itemToBuy = <ItemToBuy>change.doc.data();
-      let item = <ItemType>itemToBuy.item;
+      let itemToBuy = change.doc.data() as ItemToBuy;
+      let item = itemToBuy.item as ItemType;
       itemToBuy.id = change.doc.id;
       itemToBuy.item = item;
       if (change.type === "removed") {
