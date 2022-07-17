@@ -2,7 +2,11 @@ import React, { FC } from "react";
 
 import icon from "../assets/logo.svg";
 import styles from "./Sidebar.module.css";
-interface SidebarProps {}
+import { ActivePage } from "../App";
+interface SidebarProps {
+  setActivePage: (a: ActivePage) => void;
+  activePage: ActivePage;
+}
 
 export const Sidebar: FC<SidebarProps> = (props) => {
   return (
@@ -11,16 +15,40 @@ export const Sidebar: FC<SidebarProps> = (props) => {
         <img src={icon} className="" />
       </div>
       <div className={styles.navIcons}>
-        <div className={styles.icon}>
-          <div className={styles.active}>,</div>
+        <div
+          className={styles.icon}
+          onClick={() => props.setActivePage(ActivePage.ItemList)}
+        >
+          <div
+            className={
+              props.activePage == ActivePage.ItemList
+                ? styles.active
+                : styles.inactive
+            }
+          >
+            ,
+          </div>
           <div>
             <i className="fas fa-list"></i>
           </div>{" "}
         </div>
-        <div className={styles.icon}>
+        <div
+          className={styles.icon}
+          onClick={() => props.setActivePage(ActivePage.ShoppingLists)}
+        >
+          <div
+            className={
+              props.activePage === ActivePage.ShoppingLists
+                ? styles.active
+                : styles.inactive
+            }
+          >
+            ,
+          </div>
           <i className="fas fa-redo"></i>
         </div>
         <div className={styles.icon}>
+          <div className="">,</div>
           <i className="far fa-chart-bar"></i>
         </div>
       </div>{" "}

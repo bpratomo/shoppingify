@@ -38,12 +38,9 @@ function ShoppingList(props: ShoppingListProps) {
   const [dialog, setDialog] = useState<ActiveDialog>(ActiveDialog.closeList);
   useEffect(() => {
     if (activeListItems) {
-      console.log(`active List: ${activeListItems}`);
       const realCategories = activeListItems.map((i) => i.item.category);
-      console.log(realCategories);
       const distinctCategories = [...new Set(realCategories)];
       setCategories(distinctCategories);
-      console.log(`distinct categories: ${distinctCategories}`);
     }
   }, [activeListItems]);
 

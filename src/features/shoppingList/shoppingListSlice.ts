@@ -28,6 +28,7 @@ export interface ShoppingListType {
   name: string;
   status: Status;
   items: ItemToBuy[];
+  createdDate: string;
 }
 
 export interface ItemToBuy {
@@ -101,6 +102,9 @@ export const {
 export const getActiveList = (state: RootState) =>
   state.shoppingList.activeList;
 
+export const getActiveListId = (state: RootState) =>
+  state.shoppingList.activeListId;
+
 export const getShoppingLists = (state: RootState) =>
   state.shoppingList.ShoppingLists;
 
@@ -115,6 +119,7 @@ export async function createNewShoppingList(shoppingList: ShoppingListType) {
       name: shoppingList.name,
       status: shoppingList.status,
       items: shoppingList.items,
+      createdDate: shoppingList.createdDate,
     });
   } catch (error) {
     console.error(error);
@@ -184,6 +189,7 @@ export function initializeShoppingLists(dispatch: any) {
     name: "Test Shopping list",
     items: [],
     status: Status.Open,
+    createdDate: new Date().toUTCString(),
   };
 
   // createNewShoppingList(sampleShoppingList);
@@ -192,8 +198,14 @@ export function initializeShoppingLists(dispatch: any) {
     relevantShoppingListsQuery,
     function (snapshot) {
       snapshot.docChanges().forEach(function (change) {
-        let shoppingList = <ShoppingListType>change.doc.data();
-        shoppingList.id = change.doc.id;
+        let rawShoppingList = <ShoppingListType>change.doc.data();
+        console.log(rawShoppingList.createdDate);
+        rawShoppingList.id = change.doc.id;
+        let shoppingList = {
+          ...rawShoppingList,
+          createdDate: change.doc.data().createdDate.toDate().toString(),
+        };
+
         console.log(shoppingList);
         if (change.type === "removed") {
           dispatch(removeShoppingList(shoppingList));

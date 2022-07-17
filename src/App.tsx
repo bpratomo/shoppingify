@@ -8,6 +8,7 @@ import { ItemDesc } from "./pages/ItemDesc";
 import { ItemType, getItems, initializeItems } from "./features/item/itemSlice";
 import {
   getActiveList,
+  getActiveListId,
   getShoppingLists,
   initializeShoppingLists,
   ItemToBuy,
@@ -15,7 +16,11 @@ import {
 } from "./features/shoppingList/shoppingListSlice";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { initializeActiveListItems } from "./features/activeList/activeListSlice";
-
+import { ShoppingLists } from "./pages/ShoppingLists";
+export enum ActivePage {
+  ItemList,
+  ShoppingLists,
+}
 function App() {
   enum ActiveSidebar {
     AddItem,
@@ -24,14 +29,19 @@ function App() {
   }
 
   const activeList = useAppSelector(getActiveList);
+  const activeListId = useAppSelector(getActiveListId);
   const shoppingLists = useAppSelector(getShoppingLists);
 
   const [counter, setCounter] = useState(0);
   const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>(
     ActiveSidebar.ShoppingList
   );
+  const [activePage, setActivePage] = useState<ActivePage>(
+    ActivePage.ShoppingLists
+  );
 
   const [activeItem, setActiveItem] = useState<ItemType>();
+  const [unsubscribeActiveListItem, setUnsubscribeFn] = useState<() => void>();
 
   function activateAddItem() {
     setActiveSidebar(ActiveSidebar.AddItem);
@@ -59,15 +69,26 @@ function App() {
       const withId = shoppingLists.filter((s) => (s.id ? true : false));
       if (withId[0].id) {
         dispatch(setActiveList(withId[0].id));
-        initializeActiveListItems(dispatch, withId[0].id);
       }
     }
   }, [shoppingLists]);
 
+  useEffect(() => {
+    if (unsubscribeActiveListItem) {
+      unsubscribeActiveListItem();
+    }
+    if (activeListId) {
+      initializeActiveListItems(dispatch, activeListId);
+    }
+  }, [activeListId]);
+
   return (
     <div className="App">
-      <Sidebar />
-      <ItemList activateItemDesc={activateItemDesc} />
+      <Sidebar setActivePage={setActivePage} activePage={activePage} />
+      {activePage === ActivePage.ItemList && (
+        <ItemList activateItemDesc={activateItemDesc} />
+      )}
+      {activePage === ActivePage.ShoppingLists && <ShoppingLists />}
       {activeSidebar === ActiveSidebar.AddItem && (
         <AddItem activateShoppingList={activateShoppingList} />
       )}

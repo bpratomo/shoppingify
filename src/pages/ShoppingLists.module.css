@@ -1,0 +1,64 @@
+.base {
+  padding: 3rem 5rem;
+  display: flex;
+  font-size: 1.5rem;
+  flex-direction: column;
+  background: #fafafe;
+  gap: 1rem;
+}
+
+.listItem {
+  background: white;
+  border-radius: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.listItemTitle {
+  flex-grow: 1;
+}
+
+.date {
+  color: lightgrey;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  gap: 1rem;
+}
+
+.date > span {
+  font-size: 1rem;
+}
+
+.completed {
+  color: #56ccf2;
+  border: 1px solid #56ccf2;
+  border-radius: 1rem;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.cancelled {
+  color: #eb5757;
+  border: 1px solid #eb5757;
+  border-radius: 1rem;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.open {
+  color: black;
+  border: 1px solid lightgrey;
+  border-radius: 1rem;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.chevron {
+  margin: 1rem;
+  color: #f9a109;
+}

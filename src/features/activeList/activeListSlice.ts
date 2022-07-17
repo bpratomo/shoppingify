@@ -56,10 +56,15 @@ export const ActiveListItemsSlice = createSlice({
       );
       state.ActiveListItems = updatedItems;
     },
+
+    clearItem: (state) => {
+      state.ActiveListItems = [];
+    },
   },
 });
 
-export const { addItem, removeItem, updateItem } = ActiveListItemsSlice.actions;
+export const { addItem, removeItem, updateItem, clearItem } =
+  ActiveListItemsSlice.actions;
 
 export const getActiveListItems = (state: RootState) =>
   state.activeListItems.ActiveListItems;
@@ -169,6 +174,7 @@ export async function fsDeleteItem(shoppingListId: any, item: ItemToBuy) {
   }
 }
 export function initializeActiveListItems(dispatch: any, activeListId: string) {
+  dispatch(clearItem());
   // console.log("triggered init");
   const relevantItemsQuery = query(
     collection(db, "ShoppingLists", activeListId, "items")
