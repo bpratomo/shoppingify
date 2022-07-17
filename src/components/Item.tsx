@@ -1,13 +1,12 @@
-import { getItems, ItemType } from "../features/item/itemSlice";
+import { ItemType } from "../features/item/itemSlice";
 import styles from "./Item.module.css";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {  useAppSelector } from "../app/hooks";
 import {
   getActiveList,
   ItemToBuy,
 } from "../features/shoppingList/shoppingListSlice";
 import {
   fsAddNewItem,
-  fsCreateNewItemToBuy,
 } from "../features/activeList/activeListSlice";
 
 interface ItemProps {
@@ -16,7 +15,6 @@ interface ItemProps {
 }
 
 function Item(props: ItemProps) {
-  const dispatch = useAppDispatch();
   const activeList = useAppSelector(getActiveList);
 
   function handleItemAdd() {

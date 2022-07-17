@@ -5,13 +5,7 @@ import { getItems, ItemType } from "../features/item/itemSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   getActiveList,
-  ItemToBuy,
 } from "../features/shoppingList/shoppingListSlice";
-import {
-  fsAddNewItem,
-  fsCreateNewItemToBuy,
-} from "../features/activeList/activeListSlice";
-
 interface ItemListProps {
   activateItemDesc: (i: ItemType) => void;
 }
@@ -19,8 +13,6 @@ interface ItemListProps {
 function ItemList(props: ItemListProps) {
   const [searchText, setSearchText] = useState("");
   const items = useAppSelector(getItems);
-  const dispatch = useAppDispatch();
-  const activeList = useAppSelector(getActiveList);
   const relevantItems =
     items.length > 0
       ? items.filter((i) =>

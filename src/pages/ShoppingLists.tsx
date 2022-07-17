@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import  { FC, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   getShoppingLists,
@@ -9,7 +9,7 @@ import styles from "./ShoppingLists.module.css";
 
 interface ShoppingListsProps {}
 
-export const ShoppingLists: FC<ShoppingListsProps> = (props) => {
+export const ShoppingLists: FC<ShoppingListsProps> = () => {
   const shoppingLists = useAppSelector(getShoppingLists);
   const [months, setMonth] = useState<string[]>();
 

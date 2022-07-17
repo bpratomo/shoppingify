@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 
 import icon from "../assets/logo.svg";
 import styles from "./Sidebar.module.css";

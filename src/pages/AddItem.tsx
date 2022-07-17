@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { useAppSelector } from "../app/hooks";
 import styles from "./AddItem.module.css";
 
-import { createNewItem, getItems, ItemType } from "../features/item/itemSlice";
+import { createNewItem, getItems  } from "../features/item/itemSlice";
 interface AddItemProps {
   activateShoppingList: () => void;
 }
@@ -21,7 +21,7 @@ const CategoryDropdown: FC<DropDownProps> = (props: DropDownProps) => {
     c.toLowerCase().includes(props.categoryString.toLowerCase())
   );
   let categories = [...new Set(relevantCategories)];
-  function handleClick(category: string, e: React.MouseEvent) {
+  function handleClick(category: string ) {
     props.setCategory(category);
     props.setIsDropdownActive(false);
     props.triggerBlur();
@@ -31,7 +31,7 @@ const CategoryDropdown: FC<DropDownProps> = (props: DropDownProps) => {
   return (
     <ul className={styles.category_dropdown}>
       {categories.map((c) => (
-        <li onClick={(e) => handleClick(c, e)}>{c}</li>
+        <li onClick={() => handleClick(c)}>{c}</li>
       ))}
     </ul>
   );

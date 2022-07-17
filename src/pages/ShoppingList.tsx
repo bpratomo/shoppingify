@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import  { useState, useEffect } from "react";
 import icon from "../assets/source.svg";
 import styles from "./ShoppingList.module.css";
 import {
   getActiveList,
-  getShoppingLists,
-  initializeShoppingLists,
   ItemToBuy,
-  setActiveList,
   Status,
   updateShoppingListName,
   updateShoppingListStatus,
 } from "../features/shoppingList/shoppingListSlice";
 
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {  useAppSelector } from "../app/hooks";
 import {
   fsDeleteItem,
   fsUpdateQuantity,
   getActiveListItems,
-  initializeActiveListItems,
 } from "../features/activeList/activeListSlice";
 
 enum ActiveDialog {

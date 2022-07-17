@@ -1,12 +1,11 @@
 import styles from "./ItemDesc.module.css";
-import React, { FC } from "react";
+import  { FC } from "react";
 import {
   getActiveList,
   ItemToBuy,
 } from "../features/shoppingList/shoppingListSlice";
 import {
   fsAddNewItem,
-  fsDeleteItem,
 } from "../features/activeList/activeListSlice";
 import { useAppSelector } from "../app/hooks";
 import { deleteItem, ItemType } from "../features/item/itemSlice";
