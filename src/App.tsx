@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import ItemList from "./pages/ItemList";
 import { Sidebar } from "./components/Sidebar";
 import ShoppingList from "./pages/ShoppingList";
 import { AddItem } from "./pages/AddItem";
 import { ItemDesc } from "./pages/ItemDesc";
-import { ItemType, getItems, initializeItems } from "./features/item/itemSlice";
+import { ItemType, initializeItems } from "./features/item/itemSlice";
 import {
   getActiveList,
   getActiveListId,
   getShoppingLists,
   initializeShoppingLists,
-  ItemToBuy,
   setActiveList,
 } from "./features/shoppingList/shoppingListSlice";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { initializeActiveListItems } from "./features/activeList/activeListSlice";
 import { ShoppingLists } from "./pages/ShoppingLists";
+import { Unsubscribe } from "@reduxjs/toolkit";
 export enum ActivePage {
   ItemList,
   ShoppingLists,
 }
+
+var unsub: Unsubscribe = () => {};
 function App() {
   enum ActiveSidebar {
     AddItem,
@@ -32,7 +34,7 @@ function App() {
   const activeListId = useAppSelector(getActiveListId);
   const shoppingLists = useAppSelector(getShoppingLists);
 
-  const [counter, setCounter] = useState(0);
+  const [counter] = useState(0);
   const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>(
     ActiveSidebar.ShoppingList
   );
@@ -41,7 +43,6 @@ function App() {
   );
 
   const [activeItem, setActiveItem] = useState<ItemType>();
-  const [unsubscribeActiveListItem, setUnsubscribeFn] = useState<() => void>();
 
   function activateAddItem() {
     setActiveSidebar(ActiveSidebar.AddItem);
@@ -74,11 +75,11 @@ function App() {
   }, [shoppingLists]);
 
   useEffect(() => {
-    if (unsubscribeActiveListItem) {
-      unsubscribeActiveListItem();
-    }
+    unsub();
     if (activeListId) {
-      initializeActiveListItems(dispatch, activeListId);
+      unsub = initializeActiveListItems(dispatch, activeListId);
+
+      return unsub;
     }
   }, [activeListId]);
 

@@ -10,13 +10,12 @@ import {
   doc,
   getFirestore,
   onSnapshot,
-  orderBy,
   query,
   updateDoc,
 } from "firebase/firestore";
 
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../../app/store";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 
 export enum Status {
   Open = "OPEN",
@@ -76,7 +75,6 @@ export const shoppingListSlice = createSlice({
             ? action.payload
             : state.activeList,
       };
-      state.ShoppingLists = updatedShoppingLists;
     },
 
     setActiveList: (state, action: PayloadAction<string>) => {
@@ -185,12 +183,12 @@ export async function addNewItemInShoppingList(
 export function initializeShoppingLists(dispatch: any) {
   const relevantShoppingListsQuery = query(collection(db, "ShoppingLists"));
 
-  const sampleShoppingList: ShoppingListType = {
-    name: "Test Shopping list",
-    items: [],
-    status: Status.Open,
-    createdDate: new Date().toUTCString(),
-  };
+  //   const sampleShoppingList: ShoppingListType = {
+  //     name: "Test Shopping list",
+  //     items: [],
+  //     status: Status.Open,
+  //     createdDate: new Date().toUTCString(),
+  //   };
 
   // createNewShoppingList(sampleShoppingList);
   console.log(relevantShoppingListsQuery);

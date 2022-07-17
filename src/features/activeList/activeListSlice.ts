@@ -1,15 +1,10 @@
-import {
-  Status,
-  ShoppingListType,
-  ItemToBuy,
-} from "../shoppingList/shoppingListSlice";
+import { ItemToBuy } from "../shoppingList/shoppingListSlice";
 //
 import {
   addDoc,
   collection,
   getFirestore,
   onSnapshot,
-  orderBy,
   query,
   doc,
   updateDoc,
@@ -20,7 +15,7 @@ import {
 import { db } from "../firebase/firebaseConfig";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../../app/store";
+import { RootState } from "../../app/store";
 import { ItemType } from "../item/itemSlice";
 
 /////////////////////////////////////////////////////////////////////////////
@@ -189,7 +184,9 @@ export function initializeActiveListItems(dispatch: any, activeListId: string) {
 
   // createNewItem(testItem);
 
-  const unsubscribe = onSnapshot(relevantItemsQuery, function (snapshot) {
+  var unsub = onSnapshot(relevantItemsQuery, function (snapshot) {
+    console.log("snapshot triggered");
+
     snapshot.docChanges().forEach(function (change) {
       let itemToBuy = <ItemToBuy>change.doc.data();
       let item = <ItemType>itemToBuy.item;
@@ -206,5 +203,5 @@ export function initializeActiveListItems(dispatch: any, activeListId: string) {
       }
     });
   });
-  return unsubscribe;
+  return unsub;
 }
